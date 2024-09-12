@@ -1,9 +1,9 @@
 // Update the charts with the selected scheme
 function renderCharts(colors) {
     const commonLayout = {
-        margin: { l: 40, r: 20, t: 50, b: 40, pad: 10 },
-        xaxis: { title: 'X-axis' },
-        yaxis: { title: 'Y-axis' },
+        margin: { l: 50, r: 30, t: 50, b: 30, pad: 5 },
+        xaxis: { },
+        yaxis: { },
     };
 
     createBarChart(colors, commonLayout);
@@ -15,14 +15,14 @@ function renderCharts(colors) {
 // Bar chart (Plotly)
 function createBarChart(colors, layout) {
     const x = colors.map((_, i) => `Bar ${i + 1}`);
-    const y = colors.map(() => (Math.random() + 0.1) * 10); // Random data for the bar heights
+    const y = colors.map(() => (Math.random() + 0.1) * 10);
 
     const trace = {
         x: x,
         y: y,
         type: 'bar',
         marker: {
-            color: colors // Use colors array directly
+            color: colors
         }
     };
 
@@ -36,7 +36,7 @@ function createBoxPlot(colors, layout) {
         y: Array.from({ length: 10 }, () => Math.random() * 10),
         type: 'box',
         name: `Box ${i + 1}`,
-        marker: { color: color } // Apply consistent color
+        marker: { color: color }
     }));
 
     const boxLayout = { ...layout, title: 'Box Plot' };
@@ -47,11 +47,11 @@ function createBoxPlot(colors, layout) {
 function createScatterPlot(colors, layout) {
     const traces = colors.map((color, i) => ({
         x: Array.from({ length: 10 }, () => Math.random()),
-        y: Array.from({ length: 10 }, () => Math.random() * 10),
+        y: Array.from({ length: 10 }, () => Math.random()),
         mode: 'markers',
         type: 'scatter',
         name: `Scatter ${i + 1}`,
-        marker: { color: color, size: 12 } // Apply consistent color
+        marker: { color: color, size: 12 }
     }));
 
     const scatterLayout = { ...layout, title: 'Scatter Plot' };
