@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Scheme Visualization</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+    <div class="container">
+        <header class="text-center my-4">
+            <h1>Color Scheme Visualization</h1>
+        </header>
+
+        <!-- Toggle section for switching between modes -->
+        <div class="toggle-container">
+            <input type="radio" id="predefinedSchemeOption" name="schemeMode" checked>
+            <label for="predefinedSchemeOption">Predefined Schemes</label>
+        
+            <input type="radio" id="customSchemeOption" name="schemeMode">
+            <label for="customSchemeOption">Custom Input</label>
+        </div>
+
+        <div class="scheme-content">
+            <!-- Predefined Schemes Content -->
+            <div id="predefinedContent">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="colorCountSelect"><strong>Step1: Select schemes by color number</strong></label>
+                        <select id="colorCountSelect" class="form-control mb-3"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="schemeSelect"><strong>Step2: Select scheme</strong></label>
+                        <select id="schemeSelect" class="form-control mb-3"></select>
+                    </div>
+                </div>
+            </div>
+            <!-- Custom Input Content -->
+            <div id="customInputContent">
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <label for="customColors"><strong>Custom Colors:</strong></label>
+                        <input type="text" id="customColors" class="form-control" placeholder="comma-separated HEX, like: #F5A889,#ACD6EC,#E64B35">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Show the HEX values of current scheme -->
+        <hr>
+        <div class="row justify-content-center">
+            <span id="hexDisplay" class="text-center"></span>
+        </div>
+        <!-- Show selected scheme or custom colors -->
+        <div class="row mb-4 justify-content-center">
+            <!-- <p id="hexDisplay" class="text-center"></p> -->
+            <div id="colorSwatches" class="color-swatches"></div> <!-- This will contain the color swatches -->
+        </div>
+
+        <!-- Charts -->
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="barChart"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="boxChart"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="scatterChart"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="lineChart"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+    <script src="js/main.js"></script>
+    <script src="js/plots.js"></script>
+</body>
+</html>

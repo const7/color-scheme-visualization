@@ -1,0 +1,171 @@
+/* ------------- Mode selection ------------- */
+/* Styling for the radio buttons (as toggle) */
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.toggle-container label {
+    cursor: pointer;
+    padding: 10px 20px; /* Restore original padding for larger screens */
+    border: 2px solid #6c757d;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 8px;
+    margin: 0 5px;
+    user-select: none;
+}
+
+.toggle-container input[type="radio"] {
+    display: none; /* Hide the radio buttons */
+}
+
+.toggle-container input[type="radio"]:checked + label {
+    background-color: #17a2b8;
+    color: white;
+    border-color: #17a2b8;
+}
+
+.toggle-container label:hover {
+    background-color: #e2f3f5;
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+/* ------------- Scheme selection ------------- */
+/* Adjust height and center content */
+.select2-container--default .select2-selection--single {
+    height: 45px; /* Restore height for larger screens */
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+/* Center the arrow */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    right: 8px;
+}
+
+/* Center text in dropdown */
+.select2-selection__rendered span,
+.select2-results__options span {
+    display: flex;
+    align-items: center;
+    height: 18px;
+}
+
+/* Adjust each color swatch and text */
+.select2-results__options {
+    max-height: 250px;
+    overflow-y: auto;
+    white-space: normal;
+    padding: 5px;
+}
+
+.color-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    margin-right: 8px;
+}
+
+/* ------------- Show color swatches of current scheme ------------- */
+/* color swatches displaying */
+.color-swatches {
+    display: flex;
+    flex-wrap: wrap; /* Allow swatches to wrap into multiple lines */
+    justify-content: center; /* Center swatches horizontally */
+    align-items: center; /* Center swatches vertically */
+    gap: 10px; /* Gap between swatches */
+    margin-top: 20px;
+    padding: 10px;
+}
+
+/* Style for each color swatch */
+.color-swatches .swatch {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.color-swatches .swatch:hover {
+    transform: scale(1.1); /* Add a hover effect */
+}
+
+/* Position copy notification below the swatches container */
+.copy-notification {
+    position: absolute;
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0.9;
+    transition: opacity 0.5s ease;
+    text-align: center;
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%);
+    bottom: 20px;
+}
+
+/* ------------- For mobile devices ------------- */
+@media (max-width: 768px) {
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 15px; /* Ensure some padding on smaller screens */
+    }
+
+    /* Ensure color swatches wrap properly on small screens */
+    .color-swatches {
+        justify-content: center; /* Center horizontally */
+        flex-wrap: wrap; /* Allow wrapping */
+        gap: 5px; /* Reduce gap for smaller screens */
+    }
+
+    .color-swatches .swatch {
+        width: 40px; /* Adjust size for smaller screens */
+        height: 40px;
+    }
+    
+    /* Adjust font size and padding for better mobile readability */
+    .toggle-container label {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: 40px; /* Slightly reduce height for mobile */
+        padding: 6px;
+    }
+
+    .select2-results__option {
+        font-size: 12px; /* Further reduce font size for smaller screens */
+    }
+    
+    .select2-results__option .color-swatch {
+        width: 15px;
+        height: 15px;
+    }
+}
