@@ -3,86 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Visualize and explore color schemes for scientific charts and graphs">
+    <meta name="keywords" content="color schemes, data visualization, scientific charts">
     <title>Color Scheme Visualization</title>
-    <!-- add github corner -->
+    <!-- GitHub corner -->
     <a href="https://github.com/const7/color-scheme-visualization" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style></a>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Modern CSS frameworks -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
     <link rel="stylesheet" href="css/custom.css">
 </head>
-<body>
-    <div class="container">
-        <header class="text-center my-4">
-            <h1>Color Scheme Visualization</h1>
+<body class="bg-light">
+    <div class="container py-4">
+        <header class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary mb-2">Color Scheme Visualization</h1>
+            <p class="lead text-secondary">Explore and visualize color schemes for scientific charts</p>
         </header>
 
-        <!-- Toggle section for switching between modes -->
+        <!-- Toggle Section -->
         <div class="toggle-container">
             <input type="radio" id="predefinedSchemeOption" name="schemeMode" checked>
-            <label for="predefinedSchemeOption">Predefined Schemes</label>
+            <label for="predefinedSchemeOption">Predefined</label>
         
             <input type="radio" id="customSchemeOption" name="schemeMode">
-            <label for="customSchemeOption">Custom Input</label>
+            <label for="customSchemeOption">Custom</label>
         </div>
 
-        <div class="scheme-content">
+        <!-- Card 1: Input Controls -->
+        <div class="content-card">
             <!-- Predefined Schemes Content -->
             <div id="predefinedContent">
-                <div class="row mb-4">
+                <div class="content-card-title">Select Color Scheme</div>
+                <div class="row g-4">
                     <div class="col-md-6">
-                        <label for="colorCountSelect"><strong>Step1: Select schemes by color number</strong></label>
-                        <select id="colorCountSelect" class="form-control mb-3"></select>
+                        <label for="colorCountSelect" class="form-label fw-medium">Step 1: Select color count</label>
+                        <select id="colorCountSelect" class="form-select"></select>
                     </div>
                     <div class="col-md-6">
-                        <label for="schemeSelect"><strong>Step2: Select scheme</strong></label>
-                        <select id="schemeSelect" class="form-control mb-3"></select>
+                        <label for="schemeSelect" class="form-label fw-medium">Step 2: Select color scheme</label>
+                        <select id="schemeSelect" class="form-select"></select>
                     </div>
                 </div>
             </div>
+            
             <!-- Custom Input Content -->
             <div id="customInputContent">
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <label for="customColors"><strong>Custom Colors:</strong></label>
-                        <input type="text" id="customColors" class="form-control" placeholder="comma-separated HEX, like: #F5A889,#ACD6EC,#E64B35">
-                    </div>
-                </div>
+                <div class="content-card-title">Custom Color Input</div>
+                <label for="customColors" class="form-label fw-medium mb-2">Enter your custom colors</label>
+                <input type="text" id="customColors" class="form-control" placeholder="Enter comma-separated HEX codes (e.g., #F5A889,#ACD6EC)">
+                <div class="form-text mt-2">Valid format: #RRGGBB (e.g., #F5A889) - You can enter with or without the # symbol</div>
             </div>
         </div>
         
-        <!-- Show the HEX values of current scheme -->
-        <hr>
-        <div class="row justify-content-center">
-            <span id="hexDisplay" class="text-center"></span>
-        </div>
-        <!-- Show selected scheme or custom colors -->
-        <div class="row mb-4 justify-content-center">
-            <!-- <p id="hexDisplay" class="text-center"></p> -->
-            <div id="colorSwatches" class="color-swatches"></div> <!-- This will contain the color swatches -->
+        <!-- Card 2: Color Swatches Section -->
+        <div class="content-card">
+            <div class="content-card-title">Selected Color Scheme</div>
+            <div id="hexDisplay" class="text-center mb-3 text-secondary"></div>
+            <div id="colorSwatches" class="color-swatches"></div>
+            <div class="text-center mt-3">
+                <small class="text-muted">Click on any color to copy its HEX code</small>
+            </div>
         </div>
 
-        <!-- Charts -->
-        <hr>
-        <div class="row">
-            <div class="col-md-6">
-                <div id="barChart"></div>
+        <!-- Card 3: Charts Section -->
+        <div class="content-card">
+            <div class="content-card-title">Visualization Preview</div>
+            
+            <!-- 透明度滑块控件 -->
+            <div class="opacity-slider-container mb-3">
+                <label for="opacitySlider" class="form-label mb-1">Color opacity (alpha): <span id="opacityValue">1.0</span></label>
+                <input type="range" class="form-range" id="opacitySlider" min="0" max="1" step="0.05" value="1">
             </div>
-            <div class="col-md-6">
-                <div id="boxChart"></div>
-            </div>
-            <div class="col-md-6">
-                <div id="scatterChart"></div>
-            </div>
-            <div class="col-md-6">
-                <div id="lineChart"></div>
+            
+            <div class="chart-grid">
+                <div class="chart-item">
+                    <div id="barChart" class="chart-container"></div>
+                </div>
+                <div class="chart-item">
+                    <div id="boxChart" class="chart-container"></div>
+                </div>
+                <div class="chart-item">
+                    <div id="scatterChart" class="chart-container"></div>
+                </div>
+                <div class="chart-item">
+                    <div id="lineChart" class="chart-container"></div>
+                </div>
             </div>
         </div>
     </div>
 
+    <footer class="text-center py-4 mt-4 text-muted">
+        <small>Color scheme data from <a href="https://github.com/lcpmgh/colors/blob/main/%40colors.txt" class="text-decoration-none">lcpmgh/colors</a></small>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
-    <script src="js/main.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
     <script src="js/plots.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

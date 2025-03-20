@@ -4,20 +4,43 @@ $(document).ready(function () {
     /* ------------------- Overall setup ------------------- */
     // get & process color scheme data
     function fetchColorSchemes() {
-        fetch('assets/schemes.txt')
-            .then(response => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                return response.text();
-            })
-            .then(data => {
+        // Show loading indicator
+        $('#colorSwatches').html('<div class="loading-spinner"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted">Loading color schemes...</p></div>');
+        
+        $.ajax({
+            url: 'assets/schemes.txt',
+            type: 'GET',
+            dataType: 'text',
+            cache: false, // 禁用缓存
+            timeout: 10000, // 设置超时时间
+            success: function(data) {
                 colorSchemes = processColorSchemeData(data);
                 populateColorCountDropdown();
                 populateSchemeDropdown(colorSchemes);
                 initializeSelect2();
-            })
-            .catch(error => {
+                
+                // Show success message after loading
+                const $notification = $('<div class="toast-notification success">').text('Color schemes loaded successfully!');
+                $('body').append($notification);
+                setTimeout(() => {
+                    $notification.addClass('show');
+                    setTimeout(() => {
+                        $notification.removeClass('show');
+                        setTimeout(() => $notification.remove(), 300);
+                    }, 2000);
+                }, 100);
+            },
+            error: function(xhr, status, error) {
                 console.error("Failed to fetch color schemes:", error);
-            });
+                // 尝试本地模拟数据
+                console.log("Using local mock data as fallback");
+                const mockData = getMockColorSchemes();
+                colorSchemes = mockData;
+                populateColorCountDropdown();
+                populateSchemeDropdown(colorSchemes);
+                initializeSelect2();
+            }
+        });
     }
 
     function processColorSchemeData(data) {
@@ -34,6 +57,22 @@ $(document).ready(function () {
         $('#colorCountSelect').on('change', handleColorCountChange);
         $('#schemeSelect').on('change', handleSchemeChange);
         $('#customColors').on('input', handleCustomColorInput);
+        $('#opacitySlider').on('input', handleOpacityChange);
+        
+        // Add keyboard navigation support for color swatches
+        $(document).on('keydown', function(e) {
+            if (e.key === 'c' && (e.ctrlKey || e.metaKey)) {
+                const $swatches = $('.swatch');
+                if ($swatches.length) {
+                    const colors = [];
+                    $swatches.each(function() {
+                        colors.push($(this).data('color'));
+                    });
+                    copyToClipboard(colors.join(', '));
+                    showCopyNotification('All colors copied to clipboard!');
+                }
+            }
+        });
     }
 
     /* ------------------- Event handlers ------------------- */
@@ -41,6 +80,24 @@ $(document).ready(function () {
     function handlePredefinedSchemeSwitch() {
         $('#predefinedContent').show();
         $('#customInputContent').hide();
+        
+        // 重新初始化select2，确保正确渲染
+        try {
+            if ($('#schemeSelect').hasClass("select2-hidden-accessible")) {
+                $('#schemeSelect').select2('destroy');
+            }
+        } catch (e) {
+            console.log("Select2 was not initialized yet", e);
+        }
+        
+        $('#schemeSelect').select2({
+            templateResult: formatOption,
+            templateSelection: formatOptionSelection,
+            minimumResultsForSearch: Infinity,
+            theme: 'default',
+            dropdownParent: $('body')
+        });
+        
         const selectedSchemeID = parseInt($('#schemeSelect').val());
         if (!isNaN(selectedSchemeID)) {
             applySchemeByIndex(selectedSchemeID);
@@ -49,7 +106,7 @@ $(document).ready(function () {
     function handleCustomSchemeSwitch() {
         $('#predefinedContent').hide();
         $('#customInputContent').show();
-        $('#hexDisplay').html('<strong>Current scheme: </strong>');
+        $('#hexDisplay').html(''); // 移除所有提示文字
         $('#colorSwatches').empty();
     }
 
@@ -57,12 +114,24 @@ $(document).ready(function () {
     function handleCustomColorInput() {
         // read input, validate, and update display
         const customColors = $(this).val().split(',')
-            .map(color => color.trim().toUpperCase())
+            .map(color => {
+                // Add # prefix if missing
+                color = color.trim().toUpperCase();
+                return color.startsWith('#') ? color : `#${color}`;
+            })
             .filter(isValidHex);
+            
         if (customColors.length > 0) {
+            // Clear any existing error messages
+            $('.custom-input-error').remove();
             updateSchemeDisplay(customColors);
         } else {
-            $('#hexDisplay').html('<strong>Invalid HEX code(s) detected. Please enter valid HEX values.</strong>');
+            // Show error message under the input field instead
+            $('.custom-input-error').remove();
+            const errorMsg = $('<div class="custom-input-error text-danger mt-2">Invalid HEX code(s) detected. Please enter valid HEX values.</div>');
+            $('#customColors').after(errorMsg);
+            // Clear the swatches
+            $('#hexDisplay').html('');
             $('#colorSwatches').empty();
         }
     }
@@ -74,11 +143,17 @@ $(document).ready(function () {
 
     // Initialize Select2 dropdowns (color count and scheme)
     function initializeSelect2() {
-        $('#colorCountSelect').select2({ minimumResultsForSearch: Infinity });
+        $('#colorCountSelect').select2({ 
+            minimumResultsForSearch: Infinity,
+            theme: 'default'
+        });
+        
         $('#schemeSelect').select2({ 
             templateResult: formatOption,
             templateSelection: formatOptionSelection,
-            minimumResultsForSearch: Infinity 
+            minimumResultsForSearch: Infinity,
+            theme: 'default',
+            dropdownParent: $('body')
         });
     }
 
@@ -86,16 +161,32 @@ $(document).ready(function () {
     function formatOption(scheme) {
         if (!scheme.id) return scheme.text;
         const selectedScheme = colorSchemes.find(s => s.id == scheme.id);
-        const swatches = selectedScheme.colors.map(color => `<span class="color-swatch" style="background-color: ${color};"></span>`).join('');
-        return $('<span>' + swatches + scheme.text + '</span>');
+        if (!selectedScheme) return scheme.text;
+        
+        const swatches = selectedScheme.colors.map(color => 
+            `<span class="color-swatch" style="background-color: ${color};"></span>`
+        ).join('');
+        
+        return $(`<span class="select-option-row">
+            <span>S${parseInt(scheme.id) + 1}</span>
+            <span class="select-swatches">${swatches}</span>
+        </span>`);
     }
 
     // Custom rendering for the selected option
     function formatOptionSelection(scheme) {
         if (!scheme.id) return scheme.text;
         const selectedScheme = colorSchemes.find(s => s.id == scheme.id);
-        const swatches = selectedScheme.colors.map(color => `<span class="color-swatch" style="background-color: ${color};"></span>`).join('');
-        return $('<span>' + swatches + scheme.text + '</span>');
+        if (!selectedScheme) return scheme.text;
+        
+        const swatches = selectedScheme.colors.map(color => 
+            `<span class="color-swatch" style="background-color: ${color};"></span>`
+        ).join('');
+        
+        return $(`<span class="select-option-row">
+            <span>S${parseInt(scheme.id) + 1}</span>
+            <span class="select-swatches">${swatches}</span>
+        </span>`);
     }
 
     // Populate color count dropdown
@@ -118,12 +209,32 @@ $(document).ready(function () {
     // Populate scheme dropdown with color swatches
     function populateSchemeDropdown(schemes) {
         const $schemeSelect = $('#schemeSelect').empty();
+        
         schemes.forEach(scheme => {
-            $schemeSelect.append(new Option(`S${scheme.id + 1}`, scheme.id));
+            // Create option with scheme ID as value
+            $schemeSelect.append(new Option(`Scheme ${scheme.id + 1}`, scheme.id));
         });
+        
         if (schemes.length > 0) {
             $schemeSelect.val(schemes[0].id).trigger('change');
         }
+        
+        // 注意：需要先销毁现有select2再重新初始化
+        try {
+            if ($('#schemeSelect').hasClass("select2-hidden-accessible")) {
+                $('#schemeSelect').select2('destroy');
+            }
+        } catch (e) {
+            console.log("Select2 was not initialized yet", e);
+        }
+        
+        $('#schemeSelect').select2({
+            templateResult: formatOption,
+            templateSelection: formatOptionSelection,
+            minimumResultsForSearch: Infinity,
+            theme: 'default',
+            dropdownParent: $('body')
+        });
     }
 
     function applySchemeByIndex(schemeID) {
@@ -138,26 +249,65 @@ $(document).ready(function () {
 
     // Update all scheme display
     function renderHexDisplay(colors) {
-        const hexText = colors.map(color => `<span style="color: ${color};">${color}</span>`).join(', ');
-        $('#hexDisplay').html(`<strong>Current scheme:</strong> ${hexText}`);
+        // Remove the "Current scheme:" text completely
+        $('#hexDisplay').html('');
     }
 
     function renderSwatches(colors) {
         const $swatchesContainer = $('#colorSwatches').empty();
-        colors.forEach(color => {
-            const $swatch = $(`<div class="swatch" style="background-color: ${color};"></div>`);
+        
+        colors.forEach((color, index) => {
+            const $swatch = $(`<div class="swatch" style="background-color: ${color};" data-color="${color}"></div>`);
+            
+            // Add delayed appearance animation
+            setTimeout(() => {
+                $swatch.addClass('visible');
+            }, index * 50);
+            
             $swatch.on('click', () => {
                 copyToClipboard(color);
-                showCopyNotification(color);
+                showCopyNotification(`Copied ${color} to clipboard!`);
+                
+                // Add feedback animation
+                $swatch.addClass('copied');
+                setTimeout(() => {
+                    $swatch.removeClass('copied');
+                }, 500);
             });
+            
+            // Add tooltip showing hex value on hover
+            $swatch.append(`<span class="swatch-tooltip">${color}</span>`);
+            
             $swatchesContainer.append($swatch);
         });
+        
+        // Remove any existing Copy all button before adding a new one
+        $('.copy-all-btn').remove();
+        
+        // Add a "Copy all" button
+        const $copyAllBtn = $(`<button class="btn btn-sm btn-outline-primary copy-all-btn">Copy all colors</button>`);
+        $copyAllBtn.on('click', () => {
+            copyToClipboard(colors.join(', '));
+            showCopyNotification('All colors copied to clipboard!');
+        });
+        $swatchesContainer.after($copyAllBtn);
     }
 
     function updateSchemeDisplay(colors) {
         renderHexDisplay(colors);
         renderSwatches(colors);
-        renderCharts(colors);
+        
+        // 获取当前透明度值
+        const opacity = parseFloat($('#opacitySlider').val()) || 1.0;
+        
+        // 检查plots.js是否已加载
+        if (typeof renderCharts === 'function') {
+            renderCharts(colors, opacity);
+        } else {
+            console.error("renderCharts function is not available. Check if plots.js is loaded correctly.");
+            // 防止页面崩溃，给出可视化的提示
+            $('.chart-container').html('<div class="alert alert-warning text-center p-3">Unable to load charts. Please refresh the page.</div>');
+        }
     }
 
     // Copy color HEX to clipboard
@@ -178,12 +328,62 @@ $(document).ready(function () {
         }
     }
 
-    function showCopyNotification(color) {
-        const $notification = $('<div class="copy-notification">').text(`Copied ${color} to clipboard!`);
-        $('.color-swatches').after($notification);
+    function showCopyNotification(message) {
+        // Remove any existing notifications
+        $('.copy-notification').remove();
+        
+        const $notification = $('<div class="copy-notification">').text(message);
+        $('body').append($notification);
+        
+        // Remove after animation completes
         setTimeout(() => {
-            $notification.fadeOut(500, () => $notification.remove());
-        }, 700);
+            $notification.addClass('fade-out');
+            setTimeout(() => $notification.remove(), 300);
+        }, 2000);
+    }
+
+    // 创建模拟数据，以防远程数据加载失败
+    function getMockColorSchemes() {
+        const defaultColors = [
+            ["#B22222", "#000080"],
+            ["#B22222", "#228B22", "#000080"],
+            ["#B22222", "#228B22", "#4682B4", "#000080"],
+            ["#B22222", "#DAA520", "#228B22", "#4682B4", "#000080"],
+            ["#B22222", "#FF8C00", "#DAA520", "#228B22", "#4682B4", "#000080"]
+        ];
+        
+        return defaultColors.map((colors, index) => ({
+            id: index,
+            colors: colors
+        }));
+    }
+
+    // 处理透明度滑块变化
+    function handleOpacityChange() {
+        const opacity = parseFloat($(this).val());
+        $('#opacityValue').text(opacity.toFixed(2));
+        
+        // 获取当前颜色方案
+        let currentColors;
+        if ($('#predefinedSchemeOption').is(':checked')) {
+            const selectedSchemeID = parseInt($('#schemeSelect').val());
+            const selectedScheme = colorSchemes.find(scheme => scheme.id === selectedSchemeID);
+            if (selectedScheme) {
+                currentColors = selectedScheme.colors;
+            }
+        } else {
+            currentColors = $('#customColors').val().split(',')
+                .map(color => {
+                    color = color.trim().toUpperCase();
+                    return color.startsWith('#') ? color : `#${color}`;
+                })
+                .filter(isValidHex);
+        }
+        
+        // 如果有有效颜色，重新渲染图表
+        if (currentColors && currentColors.length > 0 && typeof renderCharts === 'function') {
+            renderCharts(currentColors, opacity);
+        }
     }
 
     // Initialize the app
