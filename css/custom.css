@@ -349,6 +349,11 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.copy-all-btn:active {
+    background-color: var(--primary-hover) !important;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+}
+
 /* Position copy notification */
 .copy-notification {
     position: fixed;
@@ -422,6 +427,11 @@ body {
 
     .content-card {
         padding: 1.25rem;
+    }
+
+    .chart-grid {
+        grid-template-columns: 1fr;  /* 移动设备上单列布局 */
+        gap: 1rem;  /* 稍微减小间距 */
     }
 }
 

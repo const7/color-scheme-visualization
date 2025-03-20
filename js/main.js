@@ -285,7 +285,7 @@ $(document).ready(function () {
         $('.copy-all-btn').remove();
         
         // Add a "Copy all" button
-        const $copyAllBtn = $(`<button class="btn btn-sm btn-outline-primary copy-all-btn">Copy all colors</button>`);
+        const $copyAllBtn = $(`<button class="btn btn-primary copy-all-btn">Copy all colors</button>`);
         $copyAllBtn.on('click', () => {
             copyToClipboard(colors.join(', '));
             showCopyNotification('All colors copied to clipboard!');
