@@ -220,7 +220,7 @@ body {
     z-index: 1060 !important;
 }
 
-/* 保持下拉选项的简单样式 */
+/* Keep the dropdown options simple */
 .select-option {
     display: flex;
     flex-direction: column;
@@ -244,7 +244,7 @@ body {
     display: inline-block;
 }
 
-/* 选中的选项样式 */
+/* Selected option style */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     display: flex;
     align-items: center;
@@ -432,8 +432,8 @@ body {
     }
 
     .chart-grid {
-        grid-template-columns: 1fr;  /* 移动设备上单列布局 */
-        gap: 1rem;  /* 稍微减小间距 */
+        grid-template-columns: 1fr;  /* Single column layout on mobile devices */
+        gap: 1rem;  /* Slightly reduce spacing */
     }
 }
 
@@ -630,7 +630,7 @@ body {
     flex: 1;
 }
 
-/* 透明度滑块容器 */
+/* Opacity slider container */
 .opacity-slider-container {
     max-width: 300px;
     margin: 0 auto 1.5rem;
@@ -648,7 +648,7 @@ body {
     color: var(--primary-color);
 }
 
-/* 自定义滑块样式 */
+/* Custom slider style */
 .form-range {
     height: 8px;
     border-radius: 5px;

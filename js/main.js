@@ -11,8 +11,8 @@ $(document).ready(function () {
             url: 'assets/schemes.txt',
             type: 'GET',
             dataType: 'text',
-            cache: false, // 禁用缓存
-            timeout: 10000, // 设置超时时间
+            cache: false, // Disable cache
+            timeout: 10000, // Set timeout
             success: function(data) {
                 colorSchemes = processColorSchemeData(data);
                 populateColorCountDropdown();
@@ -32,7 +32,7 @@ $(document).ready(function () {
             },
             error: function(xhr, status, error) {
                 console.error("Failed to fetch color schemes:", error);
-                // 尝试本地模拟数据
+                // Try local mock data
                 console.log("Using local mock data as fallback");
                 const mockData = getMockColorSchemes();
                 colorSchemes = mockData;
@@ -81,7 +81,7 @@ $(document).ready(function () {
         $('#predefinedContent').show();
         $('#customInputContent').hide();
         
-        // 重新初始化select2，确保正确渲染
+        // Reinitialize select2 to ensure correct rendering
         try {
             if ($('#schemeSelect').hasClass("select2-hidden-accessible")) {
                 $('#schemeSelect').select2('destroy');
@@ -106,7 +106,7 @@ $(document).ready(function () {
     function handleCustomSchemeSwitch() {
         $('#predefinedContent').hide();
         $('#customInputContent').show();
-        $('#hexDisplay').html(''); // 移除所有提示文字
+        $('#hexDisplay').html(''); // Remove all hint text
         $('#colorSwatches').empty();
     }
 
@@ -219,7 +219,7 @@ $(document).ready(function () {
             $schemeSelect.val(schemes[0].id).trigger('change');
         }
         
-        // 注意：需要先销毁现有select2再重新初始化
+        // Note: Destroy existing select2 before reinitializing
         try {
             if ($('#schemeSelect').hasClass("select2-hidden-accessible")) {
                 $('#schemeSelect').select2('destroy');
@@ -297,15 +297,15 @@ $(document).ready(function () {
         renderHexDisplay(colors);
         renderSwatches(colors);
         
-        // 获取当前透明度值
+        // Get current opacity value
         const opacity = parseFloat($('#opacitySlider').val()) || 1.0;
         
-        // 检查plots.js是否已加载
+        // Check if plots.js is loaded
         if (typeof renderCharts === 'function') {
             renderCharts(colors, opacity);
         } else {
             console.error("renderCharts function is not available. Check if plots.js is loaded correctly.");
-            // 防止页面崩溃，给出可视化的提示
+            // Prevent page crash, give a visual prompt
             $('.chart-container').html('<div class="alert alert-warning text-center p-3">Unable to load charts. Please refresh the page.</div>');
         }
     }
@@ -342,7 +342,7 @@ $(document).ready(function () {
         }, 2000);
     }
 
-    // 创建模拟数据，以防远程数据加载失败
+    // Create mock data in case remote data loading fails
     function getMockColorSchemes() {
         const defaultColors = [
             ["#B22222", "#000080"],
@@ -358,12 +358,12 @@ $(document).ready(function () {
         }));
     }
 
-    // 处理透明度滑块变化
+    // Handle opacity slider change
     function handleOpacityChange() {
         const opacity = parseFloat($(this).val());
         $('#opacityValue').text(opacity.toFixed(2));
         
-        // 获取当前颜色方案
+        // Get current color scheme
         let currentColors;
         if ($('#predefinedSchemeOption').is(':checked')) {
             const selectedSchemeID = parseInt($('#schemeSelect').val());
@@ -380,7 +380,7 @@ $(document).ready(function () {
                 .filter(isValidHex);
         }
         
-        // 如果有有效颜色，重新渲染图表
+        // If we have valid colors, render the charts
         if (currentColors && currentColors.length > 0 && typeof renderCharts === 'function') {
             renderCharts(currentColors, opacity);
         }

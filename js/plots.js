@@ -1,4 +1,4 @@
-// 缓存图表数据
+// cache chart data
 let chartData = {
     barData: null,
     boxData: null,
@@ -9,15 +9,15 @@ let chartData = {
 
 // Update the charts with the selected scheme
 function renderCharts(colors, opacity = 1.0) {
-    // 确保透明度值在有效范围内
+    // ensure opacity value is valid
     opacity = Math.max(0, Math.min(1, opacity));
     
-    // 检查颜色方案是否改变
+    // check if the color scheme changes
     const colorsChanged = !chartData.lastColors || 
                          colors.length !== chartData.lastColors.length || 
                          colors.some((color, i) => color !== chartData.lastColors[i]);
     
-    // 如果颜色方案改变，重置所有缓存数据
+    // reset all cache data if the color scheme changes
     if (colorsChanged) {
         chartData.lastColors = [...colors];
         chartData.barData = null;
@@ -38,7 +38,7 @@ function renderCharts(colors, opacity = 1.0) {
             linecolor: '#333',
             linewidth: 1,
             mirror: false,
-            ticks: '', // 默认不显示刻度tick
+            ticks: '',
             tickfont: { family: 'Inter, sans-serif', size: 11, color: '#333' }
         },
         yaxis: { 
@@ -48,10 +48,10 @@ function renderCharts(colors, opacity = 1.0) {
             linecolor: '#333',
             linewidth: 1,
             mirror: false,
-            ticks: 'inside', // y轴显示刻度tick，朝内显示
-            ticklen: 3,       // tick长度减少到3
-            tickwidth: 1,     // tick宽度
-            tickcolor: '#333', // tick颜色
+            ticks: 'inside',
+            ticklen: 3,
+            tickwidth: 1,
+            tickcolor: '#333',
             tickfont: { family: 'Inter, sans-serif', size: 11, color: '#333' }
         },
         hoverlabel: {
@@ -77,7 +77,7 @@ function renderCharts(colors, opacity = 1.0) {
 
 // Bar chart (Plotly)
 function createBarChart(colors, layout, opacity = 1.0) {
-    // 如果没有缓存数据，生成新数据
+    // generate new data if no cache data
     if (!chartData.barData) {
         const x = colors.map((_, i) => `Bar ${i + 1}`);
         const y = colors.map(() => (Math.random() + 0.1) * 10);
@@ -109,13 +109,13 @@ function createBarChart(colors, layout, opacity = 1.0) {
             font: { 
                 family: 'Inter, sans-serif', 
                 size: 16, 
-                weight: 'bold'  // 添加加粗
+                weight: 'bold'
             }
         },
         bargap: 0.3,
         xaxis: {
             ...layout.xaxis,
-            ticks: '', // 类别型不需要tick
+            ticks: '',
         },
         yaxis: {
             ...layout.yaxis,
@@ -133,14 +133,14 @@ function createBarChart(colors, layout, opacity = 1.0) {
 
 // Box plot (Plotly)
 function createBoxPlot(colors, layout, opacity = 1.0) {
-    // 如果没有缓存数据，生成新数据
+    // generate new data if no cache data
     if (!chartData.boxData) {
         chartData.boxData = colors.map(() => Array.from({length: 30}, () => Math.random() * 8 + 1));
     }
     
     const data = [];
     
-    // 根据颜色数量调整boxwidth
+    // adjust boxwidth according to the number of colors
     let boxwidth = 0.6;
     if (colors.length > 2) {
         boxwidth = 0.8;
@@ -177,7 +177,7 @@ function createBoxPlot(colors, layout, opacity = 1.0) {
             font: { 
                 family: 'Inter, sans-serif', 
                 size: 16, 
-                weight: 'bold'  // 添加加粗
+                weight: 'bold'
             }
         },
         showlegend: false,
@@ -186,11 +186,11 @@ function createBoxPlot(colors, layout, opacity = 1.0) {
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
         font: {family: "'Inter', sans-serif", size: 12, color: '#333'},
-        boxmode: colors.length > 2 ? 'overlay' : 'group', // 多于2个颜色时使用overlay模式
+        boxmode: colors.length > 2 ? 'overlay' : 'group',
         boxgap: 0.3,
         xaxis: {
             ...layout.xaxis,
-            ticks: '', // 类别型不需要tick
+            ticks: '',
         }
     };
     
@@ -204,20 +204,19 @@ function createBoxPlot(colors, layout, opacity = 1.0) {
 
 // Scatter plot (Plotly)
 function createScatterPlot(colors, layout, opacity = 1.0) {
-    // 如果没有缓存数据，生成新数据
+    // generate new data if no cache data
     if (!chartData.scatterData) {
         chartData.scatterData = colors.map(() => ({
-            x: Array.from({ length: 12 }, () => Math.floor(Math.random() * 10) + 1), // 使用整数
+            x: Array.from({ length: 12 }, () => Math.floor(Math.random() * 10) + 1),
             y: Array.from({ length: 12 }, () => Math.random() * 10)
         }));
     }
     
     const traces = colors.map((color, i) => {
-        // 确保有数据，即使颜色比之前多
         const pointData = i < chartData.scatterData.length ? 
             chartData.scatterData[i] : 
             {
-                x: Array.from({ length: 12 }, () => Math.floor(Math.random() * 10) + 1), // 使用整数
+                x: Array.from({ length: 12 }, () => Math.floor(Math.random() * 10) + 1),
                 y: Array.from({ length: 12 }, () => Math.random() * 10)
             };
         
@@ -252,19 +251,19 @@ function createScatterPlot(colors, layout, opacity = 1.0) {
             font: { 
                 family: 'Inter, sans-serif', 
                 size: 16, 
-                weight: 'bold'  // 添加加粗
+                weight: 'bold'
             }
         },
-        showlegend: false,  // 删除图例
+        showlegend: false,
         xaxis: {
             ...layout.xaxis,
             title: { text: 'X Value', standoff: 10 },
-            ticks: 'inside', // 数值型需要tick，朝内显示
+            ticks: 'inside',
             ticklen: 3,
             tickwidth: 1,
             tickcolor: '#333',
-            dtick: 2, // 每2个单位一个刻度，避免过于密集
-            tickformat: 'd' // 强制使用整数格式
+            dtick: 2,
+            tickformat: 'd'
         },
         yaxis: {
             ...layout.yaxis,
@@ -282,9 +281,9 @@ function createScatterPlot(colors, layout, opacity = 1.0) {
 
 // Line chart with SD (Plotly)
 function createLineChart(colors, layout, opacity = 1.0) {
-    // 如果没有缓存数据，生成新数据
+    // generate new data if no cache data
     if (!chartData.lineData) {
-        const x = Array.from({ length: 15 }, (_, i) => i + 1); // 使用整数
+        const x = Array.from({ length: 15 }, (_, i) => i + 1); // use integers
         chartData.lineData = {
             x: x,
             series: colors.map((_, i) => {
@@ -300,7 +299,7 @@ function createLineChart(colors, layout, opacity = 1.0) {
     const x = chartData.lineData.x;
 
     colors.forEach((color, i) => {
-        // 确保有数据，即使颜色比之前多
+        // Ensure data is available even if more colors are added
         let seriesData;
         if (i < chartData.lineData.series.length) {
             seriesData = chartData.lineData.series[i];
@@ -309,7 +308,7 @@ function createLineChart(colors, layout, opacity = 1.0) {
             const meanLine = x.map(() => baseY + Math.random() * 3);
             const sd = x.map(() => 0.5 + Math.random() * 1.5);
             seriesData = { meanLine, sd };
-            // 如果新增了颜色，也保存对应的数据
+            // If a new color is added, also save the corresponding data
             chartData.lineData.series.push(seriesData);
         }
         
@@ -364,7 +363,7 @@ function createLineChart(colors, layout, opacity = 1.0) {
             font: { 
                 family: 'Inter, sans-serif', 
                 size: 16, 
-                weight: 'bold'  // 添加加粗
+                weight: 'bold'
             }
         },
         showlegend: false,
@@ -372,12 +371,12 @@ function createLineChart(colors, layout, opacity = 1.0) {
         xaxis: {
             ...layout.xaxis,
             title: { text: 'X Value', standoff: 10 },
-            ticks: 'inside', // 数值型需要tick，朝内显示
+            ticks: 'inside',
             ticklen: 3,
             tickwidth: 1,
             tickcolor: '#333',
-            dtick: 3, // 每3个单位一个刻度，避免过于密集
-            tickformat: 'd' // 强制使用整数格式
+            dtick: 3,
+            tickformat: 'd'
         },
         yaxis: {
             ...layout.yaxis,
