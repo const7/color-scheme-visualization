@@ -1,6 +1,6 @@
 # Color Scheme Visualization
 
-It's a website that visualizes color schemes with different charts. Current schemes and ideas come from [lcpmgh/colors](https://github.com/lcpmgh/colors/blob/main/%40colors.txt).
+It's a website that visualizes color schemes with different charts. Current schemes and ideas come from [lcpmgh/colors](https://github.com/lcpmgh/colors).
 
 ## Resources
 
