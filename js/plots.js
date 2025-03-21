@@ -77,6 +77,10 @@ function renderCharts(colors, opacity = 1.0) {
 
 // Bar chart (Plotly)
 function createBarChart(colors, layout, opacity = 1.0) {
+    // calculate bar width and gap based on color number
+    const barWidth = colors.length <= 3 ? 0.4 : 0.6;
+    const bargapValue = colors.length <= 3 ? 0.4 : 0.3;
+    
     // generate new data if no cache data
     if (!chartData.barData) {
         const x = colors.map((_, i) => `Bar ${i + 1}`);
@@ -88,6 +92,7 @@ function createBarChart(colors, layout, opacity = 1.0) {
         x: chartData.barData.x,
         y: chartData.barData.y,
         type: 'bar',
+        width: barWidth,
         marker: {
             color: colors.map(color => adjustOpacity(color, opacity)),
             line: {
@@ -112,7 +117,7 @@ function createBarChart(colors, layout, opacity = 1.0) {
                 weight: 'bold'
             }
         },
-        bargap: 0.3,
+        bargap: bargapValue,
         xaxis: {
             ...layout.xaxis,
             ticks: '',
